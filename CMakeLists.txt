@@ -16,13 +16,36 @@ FetchContent_MakeAvailable(googletest)
 enable_testing()
 
 add_executable(
+    fmt_test
+    fmt_test.cpp
+)
+
+target_link_libraries(
+    fmt_test
+    GTest::gtest_main
+)
+
+add_executable(
     format_test
     format_test.cpp
 )
+
 target_link_libraries(
     format_test
     GTest::gtest_main
 )
 
+add_executable(
+    logtracer_test
+    logtracer_test.cpp
+)
+
+target_link_libraries(
+    logtracer_test
+    GTest::gtest_main
+)
+
 include(GoogleTest)
+gtest_discover_tests(fmt_test)
 gtest_discover_tests(format_test)
+gtest_discover_tests(logtracer_test)
