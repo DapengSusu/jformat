@@ -3,23 +3,6 @@
 
 using jumper::Fmt;
 
-class User {
-public:
-    User(unsigned id, const std::string& name)
-        : m_id(id), m_name(name) {}
-    User(unsigned id, const char* name)
-        : User(id, std::string(name)) {}
-
-    unsigned m_id;
-    std::string m_name;
-};
-
-// 注意：必须重载了<<运算符的对象才可以使用 jumper::format(...)
-std::ostream& operator<<(std::ostream& oss, const User& user)
-{
-    return oss << "id:" << user.m_id << ",name:" << user.m_name;
-}
-
 TEST(FmtTest, Normal)
 {
     {
