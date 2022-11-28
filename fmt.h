@@ -218,14 +218,21 @@ private:
     // 一对成功配对的'{'和'}'之间的内容也会被保留，并被切割为一个子串存储.
     void dispose()
     {
-        StrPos lastPos = 0;
-        stack<StrPos> lPosBrackets;
-        deque<pair<StrPos, StrPos>> brackets;
-
         m_status = true;
         m_buf.clear();
         m_subStrDeque.clear();
 
+        // 没有格式符，不需要格式化
+        if (string::npos == m_fmt.find('{') && string::npos == m_fmt.find('}'))
+        {
+            m_subStrDeque.emplace_back(m_fmt);
+
+            return;
+        }
+
+        StrPos lastPos = 0;
+        stack<StrPos> lPosBrackets;
+        deque<pair<StrPos, StrPos>> brackets;
         // 逐字符遍历
         for (auto iter = m_fmt.cbegin(); iter != m_fmt.cend(); ++iter)
         {
