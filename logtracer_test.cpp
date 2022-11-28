@@ -27,11 +27,11 @@ int main()
     // 错误！格式符不匹配，这将会返回一个空字符串！
     // LogTracer::LoglnError("No matched bracket:{}, then }", '{');
 
-    // 注意：参数比格式多是允许的，多余的参数将被忽略
+    // 注意：允许参数比格式符多，多余的参数将被忽略
     LogTracer::LoglnInfo("I'm {}.", "Jumper", 24);
     LogTracer::LoglnInfo("one:{}, two:{}, three:", 1, 2, 3, 4, 5);
 
-    // 错误！不允许格式付符比参数多，这将会返回一个空字符串！
+    // 错误！不允许格式符比参数多，这将会返回一个空字符串！
     // LogTracer::LoglnInfo("{} + {} = {}", 5);
 
     // 不带ln的版本，不会自动插入换行符'\n'，需要自己控制格式，否则log会挤在一行
