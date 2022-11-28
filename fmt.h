@@ -5,7 +5,6 @@
 #include <string>
 #include <deque>
 #include <stack>
-#include <cstring>
 
 // Debug宏开关，默认关闭
 #ifndef JDEBUG
