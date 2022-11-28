@@ -44,11 +44,28 @@ TEST(FormatTest, Normal)
     }
 
     {
+        // 参数数量可以比格式符多，多余参数将被忽略
+        auto str(jumper::format("one is {}, two is {}.", 1, 2, 3, 4, 5));
+
+        EXPECT_EQ(str, "one is 1, two is 2.");
+    }
+
+    {
         // User类重载了<<运算符，所以可以直接作为参数输出
         User user(1, "Jumper");
         std::string str(jumper::format("user:{}", user));
 
         EXPECT_EQ(str, "user:id:1,name:Jumper");
+    }
+}
+
+TEST(FormatTest, Abnormal)
+{
+    {
+        // 不允许格式符数量比参数多，这将会返回空字符串
+        auto str(jumper::format("one is {}, two is {}.", 1));
+
+        EXPECT_TRUE(str.empty());
     }
 }
 

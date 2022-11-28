@@ -1,5 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
-project(format VERSION 0.1.0)
+project(format VERSION 0.1.1)
+
+# Debug or Release
+SET(CMAKE_BUILD_TYPE "Debug")
 
 # GoogleTest requires at least C++14
 set(CMAKE_CXX_STANDARD 14)
@@ -37,15 +40,10 @@ target_link_libraries(
 
 add_executable(
     logtracer_test
+    logtracer.cpp
     logtracer_test.cpp
-)
-
-target_link_libraries(
-    logtracer_test
-    GTest::gtest_main
 )
 
 include(GoogleTest)
 gtest_discover_tests(fmt_test)
 gtest_discover_tests(format_test)
-gtest_discover_tests(logtracer_test)
