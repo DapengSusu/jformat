@@ -20,7 +20,7 @@ enable_testing()
 
 add_executable(
     fmt_test
-    fmt_test.cpp
+    tests/fmt_test.cpp
 )
 
 target_link_libraries(
@@ -28,9 +28,13 @@ target_link_libraries(
     GTest::gtest_main
 )
 
+target_include_directories(fmt_test
+    PRIVATE ${PROJECT_SOURCE_DIR}/include
+)
+
 add_executable(
     format_test
-    format_test.cpp
+    tests/format_test.cpp
 )
 
 target_link_libraries(
@@ -38,10 +42,18 @@ target_link_libraries(
     GTest::gtest_main
 )
 
+target_include_directories(format_test
+    PRIVATE ${PROJECT_SOURCE_DIR}/include
+)
+
 add_executable(
     logtracer_test
-    logtracer.cpp
-    logtracer_test.cpp
+    src/logtracer.cpp
+    tests/logtracer_test.cpp
+)
+
+target_include_directories(logtracer_test
+    PRIVATE ${PROJECT_SOURCE_DIR}/include
 )
 
 include(GoogleTest)
