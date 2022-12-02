@@ -1,3 +1,7 @@
+#ifndef LOGTRACER_H
+#define LOGTRACER_H
+
+#include <cstring>
 #include <fstream>
 #include <chrono>
 #include <mutex>
@@ -251,3 +255,5 @@ private:
 };
 
 } // namespace jumper
+
+#endif // LOGTRACER_H
