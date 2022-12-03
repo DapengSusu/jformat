@@ -1,9 +1,7 @@
 #ifndef LOGTRACER_H
 #define LOGTRACER_H
 
-#include <cstring>
 #include <fstream>
-#include <chrono>
 #include <mutex>
 #include <map>
 
@@ -34,9 +32,6 @@ const std::map<LogLevel, std::pair<std::string, std::string>> logHeaderMap {
     { LV_WARNING, { "\e[33m", "[WARNING]:" } },      // 黄色
     { LV_ERROR, { "\e[1;31m", "[ERROR]:" } },        // 红色（加粗）
 };
-
-// mutex锁
-extern std::mutex g_inner_mutex;
 } // namespace jumper_inner
 
 class LogTracer {
@@ -44,22 +39,8 @@ public:
     /// 初始化LogTracer环境
     /// 设置log输出路径，并添加时间戳，设置log输出级别，默认Info级别
     /// 如果没有将log记录到文件的需要，可不调用此函数
-    inline static void InitialTracer(LogLevel level = LV_INFO,
-        const std::string& logPath = "./logtracer.txt")
-    {
-        std::lock_guard<std::mutex> lock(jumper_inner::g_inner_mutex);
-
-        FinalTracer();
-        s_ofs.open(logPath, std::ios_base::app);
-        if (s_ofs.is_open())
-        {
-            s_ofs << "--------------------\n" << TimeStamp() << "\n";
-        }
-        else
-        {
-            std::cerr << "[logtracer]: can't open log file:" << logPath << "\n";
-        }
-    }
+    static void InitialTracer(LogLevel level = LV_INFO,
+        const std::string& logPath = "./logtracer.txt");
 
     /// 设置当前log输出等级，影响之后的log输出，之前的不受影响
     inline static void SetLogLevel(LogLevel level)
@@ -68,13 +49,19 @@ public:
     }
 
     /// 刷新log显示
-    static void FlushTracer()
+    inline static void FlushTracer()
     {
         std::cout << std::flush;
     }
 
+    /// 刷新log并换行
+    inline static void FlushlnTracer()
+    {
+        std::cout << std::endl;
+    }
+
     /// 关闭LogTracer
-    static void FinalTracer()
+    inline static void FinalTracer()
     {
         FlushTracer();
         if (s_ofs.is_open())
@@ -83,20 +70,8 @@ public:
         }
     }
 
-    /// 获取当前时间戳
-    static std::string TimeStamp()
-    {
-        std::chrono::system_clock::time_point now = std::chrono::system_clock::now();
-
-        std::time_t now_time_t = std::chrono::system_clock::to_time_t(now);
-        std::tm* now_tm = std::localtime(&now_time_t);
-
-        char buffer[128];
-        ::memset(buffer, '\0', sizeof(buffer));
-        ::strftime(buffer, sizeof(buffer), "%F %T", now_tm);
-
-        return std::string(buffer);
-    }
+    /// 获取当前时间戳，精度秒
+    static std::string TimeStamp();
 
     /// Debug级别log输出，不带换行符
     template<typename... Args>
@@ -190,7 +165,7 @@ private:
         auto color(log_color(lv));
         auto header(log_header(lv));
         auto body(jumper::format(log, t, args...));
-        std::lock_guard<std::mutex> lock(jumper_inner::g_inner_mutex);
+        std::lock_guard<std::mutex> lock(s_mutex);
 
         if (s_ofs.is_open())
         {
@@ -211,7 +186,7 @@ private:
 
         auto color(log_color(lv));
         auto header(log_header(lv));
-        std::lock_guard<std::mutex> lock(jumper_inner::g_inner_mutex);
+        std::lock_guard<std::mutex> lock(s_mutex);
 
         if (s_ofs.is_open())
         {
@@ -252,6 +227,9 @@ private:
 
     // log文件输出流
     static std::ofstream s_ofs;
+
+    // mutex锁
+    static std::mutex s_mutex;
 };
 
 } // namespace jumper

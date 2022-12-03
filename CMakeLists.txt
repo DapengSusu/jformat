@@ -1,8 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(format VERSION 0.1.1)
-
-# Debug or Release
-SET(CMAKE_BUILD_TYPE "Debug")
+project(format VERSION 0.2.0)
 
 # GoogleTest requires at least C++14
 set(CMAKE_CXX_STANDARD 14)

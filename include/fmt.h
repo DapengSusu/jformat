@@ -180,14 +180,8 @@ public:
     }
 
     /// 格式串解析成功后，从'{'和'}'处进行切割，生成的子串按序存储到队列中
-    /// 返回存放子串队列的可变引用
-    inline deque<string>& to_substrings()
-    {
-        return m_subStrDeque;
-    }
-
-    /// 常函数版本，返回存放子串队列的不可变引用
-    inline const deque<string>& to_substrings() const
+    /// 返回存放子串队列的不可变引用
+    inline const deque<string>& subs() const
     {
         return m_subStrDeque;
     }
@@ -332,7 +326,7 @@ inline bool check_fmt(const Fmt& fmt)
     if (bRet)
     {
         std::cout << "[ok]:" << fmt.to_str() << "\n|";
-        for (const auto &str: fmt.to_substrings())
+        for (const auto &str: fmt.subs())
         {
             std::cout << str << "|";
         }
@@ -347,11 +341,17 @@ inline bool check_fmt(const Fmt& fmt)
 }
 
 /// 工具函数，测试当前格式字符串构造Fmt对象是否能解析成功
-inline bool check_fmt(const std::string& s)
+inline bool check_fmt(const char* str)
 {
-    Fmt fmt(s);
+    Fmt fmt(str);
 
     return check_fmt(fmt);
+}
+
+/// 工具函数，测试当前格式字符串构造Fmt对象是否能解析成功
+inline bool check_fmt(const std::string& s)
+{
+    return check_fmt(s.c_str());
 }
 
 } // namespace jumper

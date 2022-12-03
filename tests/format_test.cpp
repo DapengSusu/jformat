@@ -1,4 +1,7 @@
+#include <vector>
+
 #include "gtest/gtest.h"
+#include "fmt.h"
 #include "format.h"
 
 using jumper::Fmt;
@@ -51,11 +54,49 @@ TEST(FormatTest, Normal)
     }
 
     {
-        // User类重载了<<运算符，所以可以直接作为参数输出
+        auto str(jumper::format("A simple message.", "important"));
+
+        EXPECT_EQ(str, "A simple message.");
+    }
+
+    {
+        // User类重载了 << 运算符，所以可以直接作为参数输出
         User user(1, "Jumper");
         std::string str(jumper::format("user:{}", user));
 
         EXPECT_EQ(str, "user:id:1,name:Jumper");
+    }
+
+    {
+        // print
+        jumper::println("Input something...");
+        jumper::print("A -> {}\n", 'a');
+        jumper::println(std::string("d -> {}"), 'D');
+
+        Fmt fmt("{} is my best friend.\n");
+        jumper::print(fmt, "Anna");
+
+        ASSERT_TRUE(true);
+    }
+
+    {
+        // 提高性能的技巧：对相同的格式反复输出（或者格式化）时，可以提前构造Fmt对象，重复利用
+        int a = 0;
+        int b = 0;
+        Fmt fmt("loop index: {}, a = {}, b = {}");
+
+        ASSERT_TRUE(fmt.is_ok()); // Fmt对象必须有效
+
+        for (auto i = 0; i != 10; ++i)
+        {
+            ++a;
+            b += 2;
+
+            jumper::println(fmt, i, a, b);
+        }
+
+        EXPECT_EQ(a, 10);
+        EXPECT_EQ(b, 20);
     }
 }
 
