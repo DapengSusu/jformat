@@ -50,6 +50,17 @@ auto str(jumper::format("one is {}, two is {}.", 1));
 EXPECT_TRUE(str.empty()); // str is an empty string!
 ```
 
+可以使用转义输出大括号：
+
+```c++
+Fmt fmt("This is a big bracket: {{}}.");
+std::string str(jumper::format("This is a big bracket: {{ {} }}.", 'a')); // 这里的空格是必要的！
+
+ASSERT_TRUE(fmt.is_ok());
+EXPECT_EQ(fmt.to_str(), "This is a big bracket: {}.");
+EXPECT_EQ(str, "This is a big bracket: { a }.");
+```
+
 > __`format` 使用技巧__
 >
 > 因为 `format` 依赖 `Fmt` 的功能，每次传入 `string` 或者C字符串时，都会构造一个临时的 `Fmt` 对象，这个过程需要解析格式，识别格式符 `"{}"` 和转义符 `"{{"` 以及 `"}}"`，这是有一定开销的。所以，对同一种格式多次格式化，包括下面要提到的格式化输出函数和 `LogTracer` 库，同样的格式多次格式化输出（例如在循环中），我们可以提前构造一个 `Fmt` 对象，之后多次使用，这样就省去了反复构造相同对象的开销。
@@ -61,10 +72,10 @@ EXPECT_TRUE(str.empty()); // str is an empty string!
 > ASSERT_TRUE(fmt.is_ok()); // Fmt对象必须有效，使用前需要判断
 > for (auto i = 0; i != 10; ++i)
 > {
->     ++a;
->     b += 2;
+>  ++a;
+>  b += 2;
 > 
->     jumper::println(fmt, i, a, b);
+>  jumper::println(fmt, i, a, b);
 > }
 > 
 > EXPECT_EQ(a, 10);

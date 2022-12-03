@@ -1,3 +1,4 @@
+#include <string>
 #include <vector>
 
 #include "gtest/gtest.h"
@@ -97,6 +98,16 @@ TEST(FormatTest, Normal)
 
         EXPECT_EQ(a, 10);
         EXPECT_EQ(b, 20);
+    }
+
+    {
+        // 使用转义输出大括号
+        Fmt fmt("This is a big bracket: {{}}.");
+        std::string str(jumper::format("This is a big bracket: {{ {} }}.", 'a'));
+        
+        ASSERT_TRUE(fmt.is_ok());
+        EXPECT_EQ(fmt.to_str(), "This is a big bracket: {}.");
+        EXPECT_EQ(str, "This is a big bracket: { a }.");
     }
 }
 
