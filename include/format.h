@@ -62,7 +62,7 @@ std::ostringstream& __format(std::ostringstream& oss,
 }
 
 template<typename T, typename... Args>
-inline std::string _format(Fmt& fmt, const T& t, const Args&... args)
+inline std::string _format(const Fmt& fmt, const T& t, const Args&... args)
 {
     if (!fmt.is_ok() || fmt.subs().size()-1 > sizeof...(args)+1)
     {
@@ -77,31 +77,31 @@ inline std::string _format(Fmt& fmt, const T& t, const Args&... args)
 
 /// 直接接受一个Fmt对象的可变引用，如果Fmt对象无效，返回空字符串
 template<typename T, typename... Args>
-inline std::string format(Fmt& fmt, const T& t, const Args&... args)
+inline std::string format(const Fmt& fmt, const T& t, const Args&... args)
 {
     return jumper_inner::_format(fmt, t, args...);
 }
 
 /// 不带换行输出
 template<typename T, typename... Args>
-inline std::ostream& print(Fmt& fmt, const T& t, const Args&... args)
+inline std::ostream& print(const Fmt& fmt, const T& t, const Args&... args)
 {
     return (std::cout << format(fmt, t, args...));
 }
 
-inline std::ostream& print(Fmt& fmt)
+inline std::ostream& print(const Fmt& fmt)
 {
     return (std::cout << fmt.to_str());
 }
 
 /// 带换行输出
 template<typename T, typename... Args>
-inline std::ostream& println(Fmt& fmt, const T& t, const Args&... args)
+inline std::ostream& println(const Fmt& fmt, const T& t, const Args&... args)
 {
     return (print(fmt, t, args...) << "\n");
 }
 
-inline std::ostream& println(Fmt& fmt)
+inline std::ostream& println(const Fmt& fmt)
 {
     return (print(fmt) << "\n");
 }

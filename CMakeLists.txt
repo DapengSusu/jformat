@@ -1,13 +1,25 @@
 cmake_minimum_required(VERSION 3.16)
-project(format VERSION 0.2.0)
+
+project(format VERSION 0.2.1)
 
 # GoogleTest requires at least C++14
 set(CMAKE_CXX_STANDARD 14)
+
+# Debug or Release
+set(CMAKE_BUILD_TYPE Release)
+
+if (CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
+else()
+    set(CMAKE_BUILD_TYPE Debug)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O0 -g")
+endif()
 
 include(FetchContent)
 FetchContent_Declare(
     googletest
     URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP true
 )
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)

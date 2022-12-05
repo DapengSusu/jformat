@@ -56,7 +56,7 @@ int main()
 
     // 立即关闭log文件，之后的log将不会写入文件，但仍然会在终端输出。
     // 可选，默认在程序结束时自动关闭
-    // LogTracer::FinalTracer();
+    LogTracer::FinalTracer();
 
     return 0;
 }

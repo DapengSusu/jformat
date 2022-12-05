@@ -80,11 +80,23 @@ public:
         print(std::cout, LV_DEBUG, log, args...);
     }
 
+    template<typename... Args>
+    inline static void LogDebug(const Fmt& fmt, const Args&... args)
+    {
+        print(std::cout, LV_DEBUG, fmt, args...);
+    }
+
     /// Debug级别log输出，自带换行符
     template<typename... Args>
     inline static void LoglnDebug(const std::string& log, const Args&... args)
     {
         println(std::cout, LV_DEBUG, log, args...);
+    }
+
+    template<typename... Args>
+    inline static void LoglnDebug(const Fmt& fmt, const Args&... args)
+    {
+        println(std::cout, LV_DEBUG, fmt, args...);
     }
 
     /// Info级别log输出，不带换行符
@@ -94,11 +106,23 @@ public:
         print(std::cout, LV_INFO, log, args...);
     }
 
+    template<typename... Args>
+    inline static void LogInfo(const Fmt& fmt, const Args&... args)
+    {
+        print(std::cout, LV_INFO, fmt, args...);
+    }
+
     /// Info级别log输出，自带换行符
     template<typename... Args>
     inline static void LoglnInfo(const std::string& log, const Args&... args)
     {
         println(std::cout, LV_INFO, log, args...);
+    }
+
+    template<typename... Args>
+    inline static void LoglnInfo(const Fmt& fmt, const Args&... args)
+    {
+        println(std::cout, LV_INFO, fmt, args...);
     }
 
     /// Warning级别log输出，不带换行符
@@ -108,11 +132,23 @@ public:
         print(std::cout, LV_WARNING, log, args...);
     }
 
+    template<typename... Args>
+    inline static void LogWarning(const Fmt& fmt, const Args&... args)
+    {
+        print(std::cout, LV_WARNING, fmt, args...);
+    }
+
     /// Warning级别log输出，自带换行符
     template<typename... Args>
     inline static void LoglnWarning(const std::string& log, const Args&... args)
     {
         println(std::cout, LV_WARNING, log, args...);
+    }
+
+    template<typename... Args>
+    inline static void LoglnWarning(const Fmt& fmt, const Args&... args)
+    {
+        println(std::cout, LV_WARNING, fmt, args...);
     }
 
     /// Error级别log输出，不带换行符
@@ -122,11 +158,23 @@ public:
         print(std::cerr, LV_ERROR, log, args...);
     }
 
+    template<typename... Args>
+    inline static void LogError(const Fmt& fmt, const Args&... args)
+    {
+        print(std::cerr, LV_ERROR, fmt, args...);
+    }
+
     /// Error级别log输出，自带换行符
     template<typename... Args>
     inline static void LoglnError(const std::string& log, const Args&... args)
     {
         println(std::cerr, LV_ERROR, log, args...);
+    }
+
+    template<typename... Args>
+    inline static void LoglnError(const Fmt& fmt, const Args&... args)
+    {
+        println(std::cerr, LV_ERROR, fmt, args...);
     }
 
 private:
@@ -169,7 +217,29 @@ private:
 
         if (s_ofs.is_open())
         {
-            s_ofs << header << body << "\n";
+            s_ofs << header << body;
+        }
+
+        return (os << color << header << body << "\e[0m");
+    }
+
+    template<typename T, typename... Args>
+    inline static std::ostream& print(std::ostream& os, LogLevel lv,
+        const Fmt& fmt, const T& t, const Args&... args)
+    {
+        if (!is_show(lv))
+        {
+            return os;
+        }
+
+        auto color(log_color(lv));
+        auto header(log_header(lv));
+        auto body(jumper::format(fmt, t, args...));
+        std::lock_guard<std::mutex> lock(s_mutex);
+
+        if (s_ofs.is_open())
+        {
+            s_ofs << header << body;
         }
 
         return (os << color << header << body << "\e[0m");
@@ -190,10 +260,30 @@ private:
 
         if (s_ofs.is_open())
         {
-            s_ofs << header << log << "\n";
+            s_ofs << header << log;
         }
 
         return (os << color << header << log << "\e[0m");
+    }
+
+    inline static std::ostream& print(std::ostream& os,
+        LogLevel lv, const Fmt& fmt)
+    {
+        if (!is_show(lv))
+        {
+            return os;
+        }
+
+        auto color(log_color(lv));
+        auto header(log_header(lv));
+        std::lock_guard<std::mutex> lock(s_mutex);
+
+        if (s_ofs.is_open())
+        {
+            s_ofs << header << fmt.to_str();
+        }
+
+        return (os << color << header << fmt.to_str() << "\e[0m");
     }
 
     // 输出log，自带换行符
@@ -206,7 +296,39 @@ private:
             return os;
         }
 
-        return (print(os, lv, log, t, args...) << "\n");
+        auto color(log_color(lv));
+        auto header(log_header(lv));
+        auto body(jumper::format(log, t, args...));
+        std::lock_guard<std::mutex> lock(s_mutex);
+
+        if (s_ofs.is_open())
+        {
+            s_ofs << header << body << "\n";
+        }
+
+        return (os << color << header << body << "\e[0m\n");
+    }
+
+    template<typename T, typename... Args>
+    inline static std::ostream& println(std::ostream& os, LogLevel lv,
+        const Fmt& fmt, const T& t, const Args&... args)
+    {
+        if (!is_show(lv))
+        {
+            return os;
+        }
+
+        auto color(log_color(lv));
+        auto header(log_header(lv));
+        auto body(jumper::format(fmt, t, args...));
+        std::lock_guard<std::mutex> lock(s_mutex);
+
+        if (s_ofs.is_open())
+        {
+            s_ofs << header << body << "\n";
+        }
+
+        return (os << color << header << body << "\e[0m\n");
     }
 
     // 输出log，自带换行符
@@ -218,7 +340,36 @@ private:
             return os;
         }
 
-        return print(os, lv, log) << "\n";
+        auto color(log_color(lv));
+        auto header(log_header(lv));
+        std::lock_guard<std::mutex> lock(s_mutex);
+
+        if (s_ofs.is_open())
+        {
+            s_ofs << header << log << "\n";
+        }
+
+        return (os << color << header << log << "\e[0m\n");
+    }
+
+    inline static std::ostream& println(std::ostream& os,
+        LogLevel lv, const Fmt& fmt)
+    {
+        if (!is_show(lv))
+        {
+            return os;
+        }
+
+        auto color(log_color(lv));
+        auto header(log_header(lv));
+        std::lock_guard<std::mutex> lock(s_mutex);
+
+        if (s_ofs.is_open())
+        {
+            s_ofs << header << fmt.to_str() << "\n";
+        }
+
+        return (os << color << header << fmt.to_str() << "\e[0m\n");
     }
 
 private:

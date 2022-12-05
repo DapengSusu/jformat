@@ -36,7 +36,7 @@ std::string jumper::LogTracer::TimeStamp()
 
     char buffer[128];
     ::memset(buffer, '\0', sizeof(buffer));
-    ::strftime(buffer, sizeof(buffer), "%F %T", now_tm);
+    ::strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", now_tm);
 
     return std::string(buffer);
 }
