@@ -30,34 +30,6 @@ using std::endl;
 // string的pos
 using StrPos = string::size_type;
 
-/// 移除字符串首尾的空字符
-inline string&& trim(const string& str)
-{
-    auto begin = str.find_first_not_of(' ');
-    auto end = str.find_last_not_of(' ');
-    string s(str, begin, end - begin + 1);
-
-    return std::move(s);
-}
-
-/// 移除字符串头部的空字符
-inline string&& trim_front(const string& str)
-{
-    auto begin = str.find_first_not_of(' ');
-    string s(str, begin);
-
-    return std::move(s);
-}
-
-/// 移除字符串尾部的空字符
-inline string&& trim_back(const string& str)
-{
-    auto end = str.find_last_not_of(' ');
-    string s(str, 0, end + 1);
-
-    return std::move(s);
-}
-
 /**
   * @brief Fmt创建格式化字符串所需的格式，以"{}"包含每个需要格式化的参数
   * @note 转义'{'请使用"{{"，转义'}'请使用"}}"，最终不会被格式化，而是输出一个'{'或者'}'
